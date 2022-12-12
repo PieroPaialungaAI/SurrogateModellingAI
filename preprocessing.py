@@ -8,7 +8,8 @@ import argparse
 
 
 
-""" This script reads the defects from a given folder and the resulting A scan from a given file. Once this is done, it prepares them to the Machine Learning step by doing the preprocessing techniques """ 
+""" This script reads the defects from a given folder and the resulting A scan from a given file. 
+Once this is done, it prepares them to the Machine Learning step by doing the preprocessing techniques """ 
 
 
 class DataPreProcessor:
