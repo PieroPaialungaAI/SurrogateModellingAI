@@ -1,0 +1,10 @@
+TRIMMING_POINT = 23000
+LENGTH_SIGNAL = 5000
+SCALE_FACTOR_SIGNAL = 10**14
+SCALE_FACTOR_DEFECT = 10**3
+DEFECT_STRING_TOP = 'xaxisnewB'
+DEFECT_STRING_BOTTOM = 'xaxisnewT'
+SCAN_STRING = 'TimeseriesMat'
+A_SCAN_PATH = '/Users/pieropaialunga/Desktop/SurrogateModellingAI/data/AScanFile.mat'
+DEFECT_PATH = '/Users/pieropaialunga/Desktop/SurrogateModellingAI/data/forPogo'
+DATA_LOC = '/Users/pieropaialunga/Desktop/SurrogateModellingAI/data/preprocessed_data'
