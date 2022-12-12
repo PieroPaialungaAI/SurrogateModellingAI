@@ -7,7 +7,7 @@ This GitHub repository collects all the code that has been used in the study mad
 
 The structure of the code is the following: 
 
-1. [__Importing and Preprocessing__](##1.Importing and Preprocessing) the data 
+1. [__Importing and Preprocessing__](## 1.Importing and Preprocessing) the data 
 2. Implementation of the Machine Learning model for the __full A-Scan reconstruction__ (CNN+RNN)
 3. Implementation of the Machine Learning model for the __main peak prediction__ (RNN)
 4. Matlab code description for the __defect generation__
@@ -16,7 +16,7 @@ The structure of the code is the following:
 7. __Testing of the models__ on the new generated defects
 8. __Plotting and reporting__ of the results. 
 
-##1.Importing and Preprocessing
+## 1.Importing and Preprocessing
 In order to import and preprocess your data run the following script on your terminal:
 ```
 python preprocessing.py 'your_defect_path' 'your_ascan_path'
