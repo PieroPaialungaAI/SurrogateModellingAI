@@ -7,7 +7,7 @@ This GitHub repository collects all the code that has been used in the study mad
 
 The structure of the code is the following: 
 
-1. [__Importing and Preprocessing__](## 1.Importing and Preprocessing) the data 
+1. [__Importing and Preprocessing__](#1.Importing-and-Preprocessing) the data 
 2. Implementation of the Machine Learning model for the __full A-Scan reconstruction__ (CNN+RNN)
 3. Implementation of the Machine Learning model for the __main peak prediction__ (RNN)
 4. Matlab code description for the __defect generation__
