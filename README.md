@@ -25,7 +25,7 @@ In case you are downloading the forPogo and `AScanFile.mat` A scan file, you can
 ```
 python preprocessing.py None None
 ```
-###1.2 Description
+### 1.2 Description
 The first step of our code is the import and preprocess of the training data. 
 
 The training data are generated using a software named [Pogo](http://www.pogo.software/). This software allows us to do a 
