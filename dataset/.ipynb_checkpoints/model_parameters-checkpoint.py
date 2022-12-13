@@ -1,0 +1,12 @@
+POOL_SIZE = 4 
+KERNEL_SIZE = 4
+ACTIVATION_FUNC_1 = 'relu'
+ACTIVATION_FUNC_2 = 'sigmoid'
+ACTIVATION_FUNC_3 = 'tanh'
+OUTPUT_FULL_MODEL_SHAPE = 5000
+OUTPUT_MAIN_PEAK_MODEL_SHAPE = 1 
+INPUT_SHAPE = 240
+LOSS_MODEL = 'mean_absolute_error'
+START_SIGNAL = 450
+LENGTH_SIGNAL = 1800
+DATA_PATH = '/Users/pieropaialunga/Desktop/SurrogateModellingAI/data/preprocessed_data'
