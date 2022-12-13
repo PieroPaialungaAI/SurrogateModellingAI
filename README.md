@@ -8,22 +8,21 @@ This GitHub repository collects all the code that has been used in the study mad
 The structure of the code is the following: 
 
 1. [__Importing and Preprocessing__](#1.Importing-and-Preprocessing) the data 
-2. Implementation of the Machine Learning model for the __full A-Scan reconstruction__ (CNN+RNN)
-3. Implementation of the Machine Learning model for the __main peak prediction__ (RNN)
-4. Matlab code description for the __defect generation__
-5. Training of the __full A scan model__
-6. Training of the __main peak prediction model__
-7. __Testing of the models__ on the new generated defects
-8. __Plotting and reporting__ of the results. 
+2. Implementation of the Machine Learning models for the __full A-Scan reconstruction__ (CNN+RNN) and the main peak (RNN)
+3. Matlab code description for the __defect generation__
+4. Training of the __full A scan model__
+5. Training of the __main peak prediction model__
+6. __Testing of the models__ on the new generated defects
+7. __Plotting and reporting__ of the results. 
 
 ## 1.Importing and Preprocessing
 In order to import and preprocess your data run the following script on your terminal:
 ```
-python preprocessing.py 'your_defect_path' 'your_ascan_path'
+python preprocessing.py 'your_defect_path' 'your_ascan_path' 'your_preprocessed_data_path"
 ```
-In case you are downloading the forPogo and `AScanFile.mat` A scan file, you can simply run:
+In case you are downloading the forPogo and `AScanFile.mat` A scan file, you can simply run. Note that the destination path should be named __preprocessed_data__.:
 ```
-python preprocessing.py None None
+python preprocessing.py None None None 
 ```
 ### 1.2 Description
 The first step of our code is the import and preprocess of the training data. 
@@ -57,9 +56,12 @@ Lastly, the `preprocessing.py` file does the operation of:
 
 In particular, you will get a:
 
-* `right_profile_defects.csv` that is the preprocessed right profile of the defects file 
-* `left_profile_defects.csv` that is the preprocessed left profile of the defects (used for plotting) file
+* `right_profile.csv` that is the preprocessed right profile of the defects file 
+* `left_profile.csv` that is the preprocessed left profile of the defects (used for plotting) file
 * `target_scans.csv` that is the preprocessed A scans file.
+
+## 2. Machine Learning models
+
 
 
 
