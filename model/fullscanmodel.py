@@ -38,6 +38,7 @@ class FullModel(tf.keras.Model):
     y = Model(inputs=inputB, outputs = y)
     combined = concatenate([x.output, y.output])
     z = self.dense2(600,activation = ACTIVATION_FUNC_3)(combined)
+
     return self.dense3(z)
 
 class MainPeakModel(tf.keras.Model):
