@@ -8,7 +8,7 @@ This GitHub repository collects all the code that has been used in the study mad
 The structure of the code is the following: 
 
 1. [__Importing and Preprocessing__](#1.Importing-and-Preprocessing) the data 
-2. Implementation of the Machine Learning models for the __full A-Scan reconstruction__ (CNN+RNN) and the main peak (RNN)
+2. [Implementation of the Machine Learning models for the __full A-Scan reconstruction__ (CNN+RNN) and the main peak (RNN)](#2. Machine Learning model)
 3. Matlab code description for the __defect generation__
 4. Training of the __full A scan model__
 5. Training of the __main peak prediction model__
@@ -16,6 +16,8 @@ The structure of the code is the following:
 7. __Plotting and reporting__ of the results. 
 
 ## 1.Importing and Preprocessing
+
+### 1.1 How to use it 
 In order to import and preprocess your data run the following script on your terminal:
 ```
 python preprocessing.py 'your_defect_path' 'your_ascan_path' 'your_preprocessed_data_path"
@@ -61,6 +63,29 @@ In particular, you will get a:
 * `target_scans.csv` that is the preprocessed A scans file.
 
 ## 2. Machine Learning models
+
+### 2.1 How to use it 
+
+Two pretrained versions of the full scan model and the main peak model are reported in the __models__ folder. 
+After the import and preprocessing steps, you can run the training using the script:
+```python training.py```
+
+
+### 2.2 Description
+Two different models are implemented: 
+
+1. The `full_scan_model.h5` takes as an input the defect and it outputs is the full normalized A scan model. This model combines the computational power of a Convolutional Neural Network (CNN) and the one of the Recurrent Neural Network (RNN-GRU). The inputs of these two models are the raw 240 long defect and a reshaped version of the same defect. The reshape converts the 240 long defect into 10 bits of 24 values. The dataset for this model is prepared using the `data_loader.py` script in the `dataset` module. As we can see from the image below the output of the model is 1800 points long (that's the length of the target A scan)
+
+"Insert RNN-CNN image here" 
+
+2. The `main_peak_model.h5` takes as an input the defect and it outputs a single value, which is the main peak and the normalization factor of the A scan. This model is a Recurrent Neural Network LSTM one and the input is the raw defect. The dataset for this model is prepared using the `data_loader.py` script in the `dataset` module. As we can see from the image below the output of the model is a single value. 
+
+"Insert RNN image here"
+
+
+
+
+
 
 
 
