@@ -18,7 +18,7 @@
 #rms = lambda x_seq: (sum(x*x for x in x_seq)/len(x_seq))**(1/2)
 #def autocorr_vector(X):
 #    autocorr_values = np.array([find_lagmin(X[i]) for i in range(len(X))])
-from constants import * 
+from dataset.constants import * 
 import pandas as pd 
 
 import numpy as np
