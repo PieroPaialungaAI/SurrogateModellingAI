@@ -5,6 +5,8 @@ from dataset.data_loader import *
 from model.model_parameters import * 
 import tensorflow as tf
 import os
+import warnings
+warnings.filterwarnings("ignore")
 
 
 def train_test_index(split_size=0.9):
@@ -21,10 +23,13 @@ def train_test_index(split_size=0.9):
 
 if __name__=='__main__':
     data = FullDataset()
+    print('Ready for ML!')
+    print(data.keys())
     CNN_data = data['Right Profile Data']
     RNN_data = data['RNN Data']
     Y = data['Full Model Target']
     main_peak = data['Main Peak Data']
+    print(len(main_peak)),print(len(Y))
     train_test = train_test_index()
     train_list = train_test['Train']
     test_list = train_test['Test']

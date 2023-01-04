@@ -34,13 +34,22 @@ def extract_folders(file_loc):
     return data_folders
 
 def merge_datasets(dataset_1,dataset_2):
-    key_data = dataset_1.keys()
+    key_data = list(dataset_1.keys())
     merged_dataset = []
     for k in key_data:
-        data_2 = dataset_2[k]
-        data_1 = dataset_1[k]
-        merged_dataset.append(np.vstack((data_1[k],data_2[k])))
-    res = {key_data[i]: merged_dataset[i] for i in range(len(key_data))}
+        if k!='Augmented Data':
+            data_2 = dataset_2[k]
+            data_1 = dataset_1[k]
+            try:
+                data_1_df = pd.DataFrame(data_1)
+                data_2_df = pd.DataFrame(data_2)
+                new_data = np.array(data_1_df.append(data_2_df))
+                print(len(new_data))
+            except:
+                new_data =np.vstack((data_1,data_2))
+                print(len(new_data))
+            merged_dataset.append(new_data)
+    res = {key_data[i]: merged_dataset[i] for i in range(len(merged_dataset))}
     return res
 
 

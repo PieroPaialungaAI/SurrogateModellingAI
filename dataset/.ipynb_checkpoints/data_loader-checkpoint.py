@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import os
 from scipy.signal import hilbert
+import warnings
+warnings.filterwarnings("ignore")
 
 def Dataset(start_signal =START_SIGNAL, data_path=DATA_PATH,augment=True):
     print('Importing the dataset...\n')
@@ -37,16 +39,32 @@ def Dataset(start_signal =START_SIGNAL, data_path=DATA_PATH,augment=True):
     last_string = data_path.split('/')[-1]
     angle = float(last_string.split('_')[0])
     angle_data = np.array([angle]*len(Y))
-    energy_and_angle = np.vstack((angle_data,X_energy[:,0])).T
+    try:
+        energy_and_angle = np.vstack((angle_data,X_energy[:,0])).T
+    except:
+        energy_and_angle = np.vstack((angle_data,X_energy)).T
     res = {'RNN Data':X_rnn, 'Full Model Target': Y, 'Right Profile Data': X_right, 'Left Profile Data': X_left,
            'Main Peak Data':main_peak,'Energy and Angle Data':energy_and_angle,'Augmented Data': augment}
     return res
 
 def FullDataset(full_data_path=DATA_PATH):
     folders = extract_folders(DATA_PATH)
-    first_dataset = Dataset(data_path = DATA_PATH+'/'+folders[0])
-    for f in folders[1:]:
-        first_dataset = merge_datasets(first_dataset,Dataset(data_path=DATA_PATH++'/'+f))
+    try:
+        first_dataset = Dataset(data_path = DATA_PATH+'/'+folders[0],augment=False)
+    except:
+        print('No augmented data found...\n')
+        first_dataset = Dataset(data_path = DATA_PATH+'/'+folders[0],augment=False)
+    print('Building whole dataset...\n')
+    #print(first_dataset)
+    for f in folders[1::]:
+        print('Extracting data from '+f)
+        try:
+            print('Found bonus data!...\n')
+            second_dataset = Dataset(data_path = DATA_PATH+'/'+f,augment=False)
+            first_dataset = merge_datasets(first_dataset,second_dataset)
+        except:
+            second_dataset = Dataset(data_path = DATA_PATH+'/'+f,augment=False)
+            first_dataset = merge_datasets(first_dataset,second_dataset)
     return first_dataset
 
     
