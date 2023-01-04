@@ -1,28 +1,9 @@
-#from sklearn import preprocessing
-#from sklearn.metrics import mean_squared_error as mse
-#from sklearn.model_selection import train_test_split
-#from sklearn.metrics import r2_score
-#import scipy.stats
-#from scipy.signal import find_peaks
-#import statsmodels.api as sm
-
-#def find_lagmin(defect):
-#    autocorr_i = sm.tsa.acf(defect,nlags=len(defect))/np.var(defect)
-    #autocorr_i = autocorr_i/autocorr_i[0]
-#    try:
-#        autocorr_i = autocorr_i[:np.where(autocorr_i<0)[0][0]]
-#    except:
-#        continue
-#    return np.argmin(np.abs(autocorr_i-1/np.exp(1)))
-
-#rms = lambda x_seq: (sum(x*x for x in x_seq)/len(x_seq))**(1/2)
-#def autocorr_vector(X):
-#    autocorr_values = np.array([find_lagmin(X[i]) for i in range(len(X))])
 from dataset.constants import * 
 import pandas as pd 
-
 import numpy as np
 from scipy.signal import hilbert
+from scipy.integrate import simps
+import os
 
 def first_peak_vector(Y):
     return np.array([np.abs(hilbert(y)).max() for y in Y])
@@ -40,6 +21,27 @@ def merge_data(array_1,array_2):
     array_1,array_2 = pd.DataFrame(array_1),pd.DataFrame(array_2)
     return np.array(array_1.append(array_2))
 
+def energy_X(X):
+    return np.array([simps(X[i]) for i in range(len(X))])
+
+def extract_folders(file_loc):
+    folder = file_loc
+    sub_folders = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
+    data_folders = []
+    for sub_folder in sub_folders:
+        if len(sub_folder.split('.'))==1:
+            data_folders.append(sub_folder)
+    return data_folders
+
+def merge_datasets(dataset_1,dataset_2):
+    key_data = dataset_1.keys()
+    merged_dataset = []
+    for k in key_data:
+        data_2 = dataset_2[k]
+        data_1 = dataset_1[k]
+        merged_dataset.append(np.vstack((data_1[k],data_2[k])))
+    res = {key_data[i]: merged_dataset[i] for i in range(len(key_data))}
+    return res
 
 
         
