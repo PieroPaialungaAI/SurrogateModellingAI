@@ -13,6 +13,7 @@ def FullScanModel():
     opt = tf.keras.optimizers.Adam()
     inputA = Input(shape=(CNN_INPUT_SHAPE,1))
     inputB = Input(shape=(RNN_INPUT_SHAPE,10))
+    inputC = Input(shape=(2))
     x1 = Conv1D(filters=7, kernel_size=KERNEL_SIZE)(inputA)
     x1 = MaxPooling1D(pool_size=POOL_SIZE)(x1)
     x1 = Conv1D(filters=14, kernel_size=KERNEL_SIZE)(x1)
@@ -25,11 +26,13 @@ def FullScanModel():
     y1 = Dense(100,activation = func)(y1)
     y1 = Flatten()(y1)
     y1 = Model(inputs=inputB, outputs=y1)
+    x2 = Model(inputs=inputC,outputs=inputC)
     combined = concatenate([x1.output, y1.output])
+    combined = concatenate([combined,x2.output])
     func = 'tanh'
-    z = Dense(600,activation = func)(combined)
+    z = Dense(400,activation = func)(combined)
     z = Dense(OUTPUT_FULL_MODEL_SHAPE)(z)
-    model = Model(inputs=[x1.input,y1.input], outputs=z)
+    model = Model(inputs=[x1.input,y1.input,x2.input], outputs=z)
     model.compile(loss=LOSS_MODEL, optimizer=opt)
     return model
 
