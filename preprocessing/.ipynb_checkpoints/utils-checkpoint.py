@@ -7,8 +7,12 @@ from os import listdir
 from os.path import isfile, join
 import os 
 
-def a_scans_prepro(a_scans):
-    return SCALE_FACTOR_SIGNAL*a_scans[:,int(TRIMMING_POINT):int(TRIMMING_POINT+LENGTH_SIGNAL)]
+
+def trimming_points_value(angle):
+    return ANGLE_TRIMMING[angle]
+ 
+def a_scans_prepro(a_scans,trimming_point):
+    return SCALE_FACTOR_SIGNAL*a_scans[:,int(trimming_point):int(trimming_point+LENGTH_SIGNAL)]
 
 def defects_prepro(defects):
     return SCALE_FACTOR_DEFECT*np.array([x-x[-1] for x in defects])

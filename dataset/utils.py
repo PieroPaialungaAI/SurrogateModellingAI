@@ -44,10 +44,8 @@ def merge_datasets(dataset_1,dataset_2):
                 data_1_df = pd.DataFrame(data_1)
                 data_2_df = pd.DataFrame(data_2)
                 new_data = np.array(data_1_df.append(data_2_df))
-                print(len(new_data))
             except:
                 new_data =np.vstack((data_1,data_2))
-                print(len(new_data))
             merged_dataset.append(new_data)
     res = {key_data[i]: merged_dataset[i] for i in range(len(merged_dataset))}
     return res

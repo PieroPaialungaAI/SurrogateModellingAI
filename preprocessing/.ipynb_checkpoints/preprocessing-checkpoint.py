@@ -21,7 +21,9 @@ class DataPreProcessor:
     
     def preprocess_ascans(self):
         Y = scipy.io.loadmat(self.a_scan_loc)[SCAN_STRING]
-        Y = a_scans_prepro(Y)
+        angle = self.a_scan_loc.split('/')
+        angle=int(angle[-2].split('_')[0])
+        Y = a_scans_prepro(Y,trimming_points_value(angle))
         return Y
     
     def preprocess_defects(self):

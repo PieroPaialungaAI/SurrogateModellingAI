@@ -1,4 +1,4 @@
-TRIMMING_POINT = 23000
+TRIMMING_POINT = 20000
 LENGTH_SIGNAL = 5000
 SCALE_FACTOR_SIGNAL = 10**14
 SCALE_FACTOR_DEFECT = 10**3
@@ -9,3 +9,4 @@ FILE_PATH = '/Users/pieropaialunga/Desktop/SurrogateModellingAI/raw_data'
 DATA_LOC = '/Users/pieropaialunga/Desktop/SurrogateModellingAI/preprocessed_data'
 TIME_SERIES_STRING = 'AScanFile.mat'
 DEFECT_STRING = 'forPogo'
+ANGLE_TRIMMING = {50:12000,52:12500,53:13000,54:13500,56:14000,58:14500,70:23000}
