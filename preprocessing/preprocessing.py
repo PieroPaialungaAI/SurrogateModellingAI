@@ -14,16 +14,25 @@ Once this is done, it prepares them to the Machine Learning step by doing the pr
 
 class DataPreProcessor:
     
-    def __init__(self,a_scan_loc,defect_loc):
+    def __init__(self,file_path, a_scan_loc,defect_loc):
         self.a_scan_loc = a_scan_loc
         self.defect_loc = defect_loc
+        self.file_path = file_path
 
+
+
+    
     
     def preprocess_ascans(self):
         Y = scipy.io.loadmat(self.a_scan_loc)[SCAN_STRING]
-        angle = self.a_scan_loc.split('/')
-        angle=int(angle[-2].split('_')[0])
-        Y = a_scans_prepro(Y,trimming_points_value(angle))
+        try:
+            angle = return_angle(self.a_scan_loc)
+            trimming_point = preprocess_smooth_scans(self.a_scan_loc,self.file_path)
+            print(trimming_point)
+        except:
+            trimming_point = 23450
+            print(trimming_point)
+        Y = a_scans_prepro(Y,trimming_point)
         return Y
     
     def preprocess_defects(self):
@@ -34,10 +43,12 @@ class DataPreProcessor:
         X_bottom = defects_prepro(X_bottom)
         return {'X_top':X_top,'X_bottom':X_bottom}
 
-def full_preprocess(f,dataloc):
+
+    
+def full_preprocess(f,dataloc,file_loc):
     print('Using default A scan and defect path \n')
     a_scan_loc, defect_loc, angle = f['a_scan_loc'],f['defect_loc'],f['angle']
-    data_preprocessor = DataPreProcessor(a_scan_loc,defect_loc)
+    data_preprocessor = DataPreProcessor(file_loc,a_scan_loc,defect_loc)
     print('Preprocessing Defects...\n')
     X =  data_preprocessor.preprocess_defects()
     X_top, X_bottom = X['X_top'],X['X_bottom']
@@ -57,7 +68,7 @@ def full_preprocess(f,dataloc):
 if __name__ == "__main__":
     e_fold = extract_folders(FILE_PATH)
     for fold in e_fold:
-        full_preprocess(fold,DATA_LOC)
+        full_preprocess(fold,DATA_LOC,FILE_PATH)
 
     
     

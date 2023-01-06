@@ -8,9 +8,22 @@ from os.path import isfile, join
 import os 
 
 
-def trimming_points_value(angle):
-    return ANGLE_TRIMMING[angle]
- 
+#def trimming_points_value(angle):
+#    return ANGLE_TRIMMING[angle]
+
+def return_angle(a_scan_loc):
+    angle = a_scan_loc.split('/')
+    angle=int(angle[-2].split('_')[0])
+    return angle
+
+
+def preprocess_smooth_scans(a_scan_loc,file_path):
+    angle = return_angle(a_scan_loc)
+    Y = (scipy.io.loadmat(file_path+'/'+SMOOTH_FOLD+'/'+str(int(angle))+'_smooth.mat')[SCAN_STRING]*10**14)[0]
+    trimming_start = np.where(Y>0.0005)[0][0]
+    return trimming_start
+
+
 def a_scans_prepro(a_scans,trimming_point):
     return SCALE_FACTOR_SIGNAL*a_scans[:,int(trimming_point):int(trimming_point+LENGTH_SIGNAL)]
 
@@ -37,9 +50,12 @@ def extract_folders(file_loc):
             data_folders.append(sub_folder)
     final_data_folders = []
     for d in data_folders:
-        angle = float(d.split('_')[0])
-        a_scan_loc= folder+'/'+d+'/'+TIME_SERIES_STRING
-        defects_loc = folder+'/'+d+'/'+DEFECT_STRING
-        dict_data = {'a_scan_loc':a_scan_loc,'defect_loc':defects_loc,'angle':angle}
-        final_data_folders.append(dict_data)
+        try:
+            angle = float(d.split('_')[0])
+            a_scan_loc= folder+'/'+d+'/'+TIME_SERIES_STRING
+            defects_loc = folder+'/'+d+'/'+DEFECT_STRING
+            dict_data = {'a_scan_loc':a_scan_loc,'defect_loc':defects_loc,'angle':angle}
+            final_data_folders.append(dict_data)
+        except:
+            continue
     return final_data_folders
