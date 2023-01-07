@@ -50,7 +50,7 @@ def Dataset(start_signal =START_SIGNAL, data_path=DATA_PATH,augment=True):
 def FullDataset(full_data_path=DATA_PATH):
     folders = extract_folders(DATA_PATH)
     try:
-        first_dataset = Dataset(data_path = DATA_PATH+'/'+folders[0],augment=True)
+        first_dataset = Dataset(data_path = DATA_PATH+'/'+folders[0],augment=False)
     except:
         print('No augmented data found...\n')
         first_dataset = Dataset(data_path = DATA_PATH+'/'+folders[0],augment=False)
@@ -59,7 +59,7 @@ def FullDataset(full_data_path=DATA_PATH):
         print('Extracting data from '+f)
         try:
             print('Found bonus data!...\n')
-            second_dataset = Dataset(data_path = DATA_PATH+'/'+f,augment=True)
+            second_dataset = Dataset(data_path = DATA_PATH+'/'+f,augment=False)
             first_dataset = merge_datasets(first_dataset,second_dataset)
         except:
             second_dataset = Dataset(data_path = DATA_PATH+'/'+f,augment=False)

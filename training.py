@@ -21,19 +21,26 @@ def train_test_index(split_size=0.9):
     final_test_list_copy = final_test_list.copy()
     return {'Train':np.array(train_list),'Test':np.array(test_list)}
 
+
+
 if __name__=='__main__':
     data = FullDataset()
     print('Ready for ML!')
-    print(data.keys())
-    CNN_data = data['Right Profile Data']
-    RNN_data = data['RNN Data']
-    Y = data['Full Model Target']
-    main_peak = data['Main Peak Data']
-    print(len(main_peak)),print(len(Y))
+    CNN_data = data['Right Profile Data'][0:700]
+    RNN_data = data['RNN Data'][0:700]
+    Y = data['Full Model Target'][0:700]
+    main_peak = data['Main Peak Data'][0:700]
+    Energy_angle_data = data['Energy and Angle Data'][0:700]
+    print('Exporting the data')
+    np.save('CNN_data.npy',CNN_data)
+    np.save('RNN_data.npy',RNN_data)
+    np.save('Y_data.npy',Y)
+    np.save('main_peak_data.npy',main_peak)
+    np.save('energy_and_angle_data.npy',Energy_angle_data)
+    print('Training/Test split')
     train_test = train_test_index()
     train_list = train_test['Train']
     test_list = train_test['Test']
-    Energy_angle_data = data['Energy and Angle Data']
     CNN_data_train = CNN_data[train_list]
     CNN_data_test = CNN_data[test_list]
     RNN_data_train = RNN_data[train_list]
@@ -51,14 +58,19 @@ if __name__=='__main__':
     print('Saving the model...\n')
     full_scan_model.save('fullscan_saved_model.h5')
     main_peak_model = model.MainPeakModel()
-    main_peak_model.build(RNN_data.shape,)
-    opt = tf.keras.optimizers.Adam()
     Y_train = main_peak[train_list]
     Y_test = main_peak[test_list]
-    main_peak_model.compile(optimizer=opt,loss = LOSS_MODEL)
+    train_data = [RNN_data_train, Energy_angle_data_train]
+    test_data = [RNN_data_test, Energy_angle_data_test]
     print('Training the main peak model (amplitude)...\n')
-    main_peak_model.fit(RNN_data_train,Y_train,validation_data=(RNN_data_test,Y_test),epochs = EPOCHS_MAINPEAKMODEL)
+    main_peak_model.fit(train_data,Y_train,validation_data=(test_data,Y_test),epochs = EPOCHS_MAINPEAKMODEL)
     print('Saving the model...\n')
     main_peak_model.save('mainpeak_saved_model.h5')
     np.save('training_test_index.npy', train_test) 
+    print('Deleting previous results...\n')
+    try:
+        os.remove("result.npy")
+    except:
+        print('No other results found...\n')
+    
 
