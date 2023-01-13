@@ -51,17 +51,6 @@ def extract_result():
 
 if __name__=='__main__':
     results = extract_result()
-    print('Plotting the results of the second peak...\n')
-    second_peak_plot(results['Y'],results['Y_pred'],results['train_list'],results['test_list'])
-    energy_angle_data = np.load('energy_and_angle_data.npy')
-    X = np.load('CNN_data.npy')
-    angle_data = energy_angle_data[:,0]
-    print('Plotting 10 random examples...\n')
-    plot_random_predictions(angle_data,X,results['Y'],results['Y_pred'],results['test_list'])
-    print('Plotting 10 best examples...\n')
-    plot_best_predictions(angle_data,X,results['Y'],results['Y_pred'],results['test_list'])
-    print('Smoothing predictions...\n')
-    Y_pred = clean_pred(results['Y_pred'])
-    print('Exporting MSE statistics...\n')
-    mse_stat = error_statistics(results['Y'],Y_pred)['MSE list']
-    pd.DataFrame(mse_stat[results['test_list']]).describe().to_csv('MSE_summary.csv')
+
+    
+    
