@@ -43,6 +43,9 @@ def Dataset(start_signal =START_SIGNAL, data_path=DATA_PATH,augment=True):
         energy_and_angle = np.vstack((angle_data,X_energy[:,0])).T
     except:
         energy_and_angle = np.vstack((angle_data,X_energy)).T
+    X_feat = np.array([extract_feature(x) for x in X_right])
+    energy_and_angle = np.hstack((energy_and_angle,X_feat))
+    print(energy_and_angle.shape)
     res = {'RNN Data':X_rnn, 'Full Model Target': Y, 'Right Profile Data': X_right, 'Left Profile Data': X_left,
            'Main Peak Data':main_peak,'Energy and Angle Data':energy_and_angle,'Augmented Data': augment}
     return res

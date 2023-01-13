@@ -51,4 +51,9 @@ def merge_datasets(dataset_1,dataset_2):
     return res
 
 
-        
+def extract_feature(X):
+    X_fft = np.fft.fft(X)
+    X_fft_abs = np.abs(X_fft)
+    x_1 = np.argsort(X_fft_abs[-10:]).tolist()
+    x_2 = np.sort(X_fft_abs[-10:]).tolist()
+    return np.array(x_1+x_2) 

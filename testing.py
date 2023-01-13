@@ -47,6 +47,8 @@ def extract_result():
     return result
     
 
+    
+
 if __name__=='__main__':
     results = extract_result()
     print('Plotting the results of the second peak...\n')
@@ -58,3 +60,8 @@ if __name__=='__main__':
     plot_random_predictions(angle_data,X,results['Y'],results['Y_pred'],results['test_list'])
     print('Plotting 10 best examples...\n')
     plot_best_predictions(angle_data,X,results['Y'],results['Y_pred'],results['test_list'])
+    print('Smoothing predictions...\n')
+    Y_pred = clean_pred(results['Y_pred'])
+    print('Exporting MSE statistics...\n')
+    mse_stat = error_statistics(results['Y'],Y_pred)['MSE list']
+    pd.DataFrame(mse_stat[results['test_list']]).describe().to_csv('MSE_summary.csv')

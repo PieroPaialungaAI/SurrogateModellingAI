@@ -8,12 +8,12 @@ from keras.callbacks import  EarlyStopping,ModelCheckpoint,ReduceLROnPlateau
 from keras.models import Sequential
 from model.model_parameters import * 
 
-def FullScanModel():
+def FullScanModel(feat_shape):
     func = 'sigmoid'
     opt = tf.keras.optimizers.Adam()
     inputA = Input(shape=(CNN_INPUT_SHAPE,1))
     inputB = Input(shape=(RNN_INPUT_SHAPE,10))
-    inputC = Input(shape=(2))
+    inputC = Input(shape=(feat_shape))
     x1 = Conv1D(filters=7, kernel_size=KERNEL_SIZE)(inputA)
     x1 = MaxPooling1D(pool_size=POOL_SIZE)(x1)
     x1 = Conv1D(filters=14, kernel_size=KERNEL_SIZE)(x1)
@@ -33,10 +33,8 @@ def FullScanModel():
     combined = concatenate([x1.output, y1.output])
     combined = concatenate([combined,x2.output])
     func = 'tanh'
-    z = Dense(80,activation = func)(combined)
-#    z = Dense(1500,activation = func)(z)
-#    z = Dense(3000,activation = func)(z)
-
+#    z = Dense(20,activation = func)(combined)
+    z = Dense(120,activation = func)(combined)
     z = Dense(OUTPUT_FULL_MODEL_SHAPE)(z)
     model = Model(inputs=[x1.input,y1.input,x2.input], outputs=z)
     model.compile(loss=LOSS_MODEL, optimizer=opt)
@@ -53,11 +51,11 @@ def FullScanModel():
 #    return model
 
 
-def MainPeakModel():
+def MainPeakModel(feat_shape):
     func = 'relu'
     opt = tf.keras.optimizers.Adam()
     inputA = Input(shape=(RNN_INPUT_SHAPE,10))
-    inputB = Input(shape=(2))
+    inputB = Input(shape=(feat_shape))
     x1 = LSTM(164)(inputA)
     x1= Dense(84,activation = func)(x1)
     x1 = Flatten()(x1)
