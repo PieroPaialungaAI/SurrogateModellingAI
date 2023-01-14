@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from scipy.signal import find_peaks,hilbert
 from sklearn.metrics import mean_squared_error as mse
+import seaborn as sns
 
 def clean_pred(signal_pred):
     new_signal_pred = []
@@ -66,7 +67,7 @@ def second_peak_plot(Y,signal_pred,train_list,test_list,num_of_test=130):
     plt.legend(fontsize=14,loc='upper left')
     plt.xlabel('Real Second Peak Amplitude (Related to First Peak)',fontsize=14)
     plt.ylabel('Predicted Second Peak Amplitude (Related to First Peak)',fontsize=14)
-    plt.savefig('SecondPeakPlot.png')
+    plt.savefig('result_plot/SecondPeakPlot.png')
     
 
     
@@ -88,7 +89,7 @@ def plot_random_predictions(angles_defect,X,Y,Y_pred,test_list):
         k = k+1
         q=q+2
         plt.tight_layout() 
-    plt.savefig('RandomExamplePlot.png')
+    plt.savefig('result_plot/RandomExamplePlot.png')
     
 
 def plot_best_predictions(angles_defect,X,Y,Y_pred,test_list):
@@ -116,22 +117,21 @@ def plot_best_predictions(angles_defect,X,Y,Y_pred,test_list):
         plt.legend(fontsize=14)
         q=q+2
         plt.tight_layout() 
-    plt.savefig('BestExamplePlot.png')
+    plt.savefig('result_plot/BestExamplePlot.png')
     
 
-def second_peak_vs_angle_raw(Y,Y_pred,train_list,test_list,angle_data):
-    second_peak_res = second_peak_metrics(Y,Y_pred,train_list,test_list)
-    second_peak_real = second_peak_res['Second Peak Real']
-    second_peak_pred = second_peak_res['Second Peak Pred']
-    test_list = second_peak_res['Test List']
+def second_peak_vs_angle_raw(second_peak_data,angle_data):
+    second_peak_real = second_peak_data['Second Peak Real']
+    second_peak_pred = second_peak_data['Second Peak Pred']
+    test_list = second_peak_data['Test List']
     plt.figure(figsize=(10,10))
-    plt.plot(angle_data,second_peak_real,'.',color='navy'.label='Real Second Peak Amplitude')
+    plt.plot(angle_data,second_peak_real,'.',color='navy',label='Real Second Peak Amplitude')
     plt.plot(angle_data,second_peak_pred,'.',color='darkorange',label='Predicted Second Peak Amplitude')
     plt.legend(fontsize=14)
     plt.title('Second Peak Raw Results',fontsize=20)
     plt.xlabel('Angle',fontsize=14)
     plt.ylabel('Amplitude',fontsize=14)
-    plt.savefig('SecondPeakRawData.png')
+    plt.savefig('result_plot/SecondPeakRawData.png')
     
     
 def build_dataset(second_peak_data,angle_data):
@@ -146,29 +146,28 @@ def build_dataset(second_peak_data,angle_data):
     data_new[0] = real_test.tolist()+pred_test.tolist()
     data_new.columns = ['Second Peak Amplitude','Angle']
     half_len = int(len(data_new)/2)
-    data_new['Real/Predicted'] = ['Real']*half_len+['Predcted']*half_len
+    data_new['Real/Predicted'] = ['Real']*half_len+['Predicted']*half_len
+    data_new.to_csv('result_plot/data.csv')
     return data_new
 
 def second_peak_vs_angle_violinplot(dataset):
     plt.figure(figsize=(20,10))
-    sns.violinplot(data=data_new,x='Angle',y='Second Peak Amplitude',hue='Real/Predicted')
+    sns.violinplot(data=dataset,x='Angle',y='Second Peak Amplitude',hue='Real/Predicted')
     plt.grid(True,alpha=0.2)
-    plt.xlabel(fontsize=12)
-    plt.ylabel(fontsize=12)
+    plt.xlabel('Angle',fontsize=12)
+    plt.ylabel('Second Peak Amplitude',fontsize=12)
     plt.legend(fontsize=18)
-    plt.show()
-    plt.savefig('SecondPeakViolinPlot.png')
+    plt.savefig('result_plot/SecondPeakViolinPlot.png')
 
 
 def second_peak_vs_angle_boxplot(dataset):
     plt.figure(figsize=(20,10))
     sns.boxplot(data=dataset,x='Angle',y='Second Peak Amplitude',hue='Real/Predicted')
     plt.grid(True,alpha=0.2)
-    plt.xlabel(fontsize=12)
-    plt.ylabel(fontsize=12)
+    plt.xlabel('Angle',fontsize=12)
+    plt.ylabel('Second Peak Amplitude',fontsize=12)
     plt.legend(fontsize=18)
-    plt.show()
-    plt.savefig('SecondPeakBoxPlot.png')
+    plt.savefig('result_plot/SecondPeakBoxPlot.png')
     
 
 def angle_dataset(dataset):
@@ -177,6 +176,7 @@ def angle_dataset(dataset):
     pred_means = []
     real_stds = []
     pred_stds = []
+    
     for a in angles:  
       real_mean = dataset[(dataset['Angle']==a) & (dataset['Real/Predicted']=='Real')]['Second Peak Amplitude'].mean()
       pred_mean = dataset[(dataset['Angle']==a) & (dataset['Real/Predicted']=='Predicted')]['Second Peak Amplitude'].mean()
@@ -191,24 +191,24 @@ def angle_dataset(dataset):
     return {'Real Mean':real_means,'Pred Mean':pred_means,
             'Real Std':real_stds,'Pred Std':pred_stds,'Angles':angles}
 
-def angle_plot(angle_dataset,confidence = 2):
+def angle_plot(angle_dataset,confidence = 1):
     angles = angle_dataset['Angles']
     real_means = angle_dataset['Real Mean']
     real_stds = angle_dataset['Real Std']
     pred_means = angle_dataset['Pred Mean']
     pred_stds = angle_dataset['Pred Std']
+
     lb_true, up_true = real_means-confidence*real_stds,real_means+confidence*real_stds
     lb_pred,up_pred = pred_means-confidence*pred_stds,pred_means+confidence*pred_stds
     plt.figure(figsize=(20,10))
     plt.plot(angles,real_means,marker='x',label='Real Mean')
     plt.plot(angles,pred_means,marker='x',label='Predicted Mean')
-    plt.fill_between(angles,lb_true,up_true,alpha=0.2,label=r'$\pm$ %f standard deviation, real values'%(confidence))
-    plt.fill_between(angles,lb_pred,up_pred,alpha=0.2,label=r'$\pm$ %f standard deviation, predicted values'%(confidence))
+    plt.fill_between(angles,lb_true,up_true,alpha=0.2,label=r'$\pm$ %.1f standard deviation, real values'%(confidence))
+    plt.fill_between(angles,lb_pred,up_pred,alpha=0.2,label=r'$\pm$ %.1f standard deviation, predicted values'%(confidence))
     plt.xlabel('Angles',fontsize=20)
     plt.ylabel('Second Peak Amplitude',fontsize=20)
     plt.legend(fontsize=14)
-    plt.show()
-    plt.savefig('SecondPeakShadePlot.png')
+    plt.savefig('result_plot/SecondPeakShadePlot.png')
     
 
 
