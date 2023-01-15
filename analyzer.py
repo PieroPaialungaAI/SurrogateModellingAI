@@ -47,7 +47,7 @@ def second_peak_metrics(Y,signal_pred,train_list,test_list,num_of_test=150):
     num_of_test = int(0.7*len(test_list))
     opt_list = np.array(test_list)[np.argsort(diff_second)[0:num_of_test]]
     test_list = opt_list 
-    num_of_test = int(0.9*len(train_list))
+    num_of_test = int(0.7*len(train_list))
     opt_list_train = np.array(train_list)[np.argsort(diff_second_train)[0:num_of_test]]
     train_list = opt_list_train
     return {'Second Peak Real':second_peak_real, 'Second Peak Pred':second_peak_pred,'Train List':train_list,'Test List':opt_list}
@@ -101,7 +101,7 @@ def plot_best_predictions(angles_defect,X,Y,Y_pred,test_list):
     angle_test_list = angles_defect[test_list]
     for angle in angles:
         angle_data = np.where(angle_test_list==angle)[0]
-        mse_angle = mse_list[angle_data]
+        mse_angle = mse_list[test_list][angle_data]
         best_list.append(angle_data[mse_angle.argmin()])
     plt.figure(figsize=(40,25))
     J = len(best_list) 
