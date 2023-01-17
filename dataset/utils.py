@@ -9,7 +9,9 @@ def first_peak_vector(Y):
     return np.array([np.abs(hilbert(y)).max() for y in Y])
 
 def trim_signal(first_peak_real,Y,start=START_SIGNAL):
-    return np.array([Y[i][start:start+LENGTH_SIGNAL]/first_peak_real[i] for i in range(len(Y))])
+    #return np.array([Y[i][start:start+LENGTH_SIGNAL]/first_peak_real[i] for i in range(len(Y))])
+    return np.array([Y[i][start:start+LENGTH_SIGNAL]/1 for i in range(len(Y))])
+
 
 def X_rnn_builder(X):
     return X[:,:].reshape(len(X),24,-1)
