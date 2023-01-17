@@ -44,10 +44,10 @@ def second_peak_metrics(Y,signal_pred,train_list,test_list,num_of_test=150):
     second_peak_pred = np.array(second_peak_pred)
     diff_second = np.abs(second_peak_real-second_peak_pred)[test_list]
     diff_second_train = np.abs(second_peak_real-second_peak_pred)[train_list]
-    num_of_test = int(0.7*len(test_list))
+    num_of_test = int(0.70*len(test_list))
     opt_list = np.array(test_list)[np.argsort(diff_second)[0:num_of_test]]
     test_list = opt_list 
-    num_of_test = int(0.7*len(train_list))
+    num_of_test = int(0.70*len(train_list))
     opt_list_train = np.array(train_list)[np.argsort(diff_second_train)[0:num_of_test]]
     train_list = opt_list_train
     return {'Second Peak Real':second_peak_real, 'Second Peak Pred':second_peak_pred,'Train List':train_list,'Test List':opt_list}
@@ -80,11 +80,12 @@ def plot_random_predictions(angles_defect,X,Y,Y_pred,test_list):
         k = np.random.choice(len(test_list))
         plt.subplot(J,2,q+1)
         plt.plot(X[test_list[k]])
-        plt.ylim(-1,1)
+        plt.ylim(-2.2,2.2)
         plt.subplot(J,2,q)
         plt.title("Defect angle %i"%(angles_defect[test_list[k]]))
         plt.plot(Y[test_list[k]],label='Real A Scan')
         plt.plot(Y_clean_pred[test_list[k]],label='Target A Scan')
+        plt.ylim(-2.2,2.2)
         plt.legend(fontsize=14)
         k = k+1
         q=q+2
@@ -109,11 +110,12 @@ def plot_best_predictions(angles_defect,X,Y,Y_pred,test_list):
         k = best_list[i]
         plt.subplot(J,2,q+1)
         plt.plot(X[test_list[k]])
-        plt.ylim(-1,1)
+        plt.ylim(-2.2,2.2)
         plt.subplot(J,2,q)
         plt.title("Defect angle %i"%(angle_test_list[k]))
         plt.plot(Y[test_list[k]],label='Real A Scan')
         plt.plot(Y_clean_pred[test_list[k]],label='Target A Scan')
+        plt.ylim(-2.2,2.2)
         plt.legend(fontsize=14)
         q=q+2
         plt.tight_layout() 
@@ -176,19 +178,26 @@ def angle_dataset(dataset):
     pred_means = []
     real_stds = []
     pred_stds = []
-    
+    real_medians = []
+    pred_medians = []
     for a in angles:  
       real_mean = dataset[(dataset['Angle']==a) & (dataset['Real/Predicted']=='Real')]['Second Peak Amplitude'].mean()
       pred_mean = dataset[(dataset['Angle']==a) & (dataset['Real/Predicted']=='Predicted')]['Second Peak Amplitude'].mean()
       real_std = dataset[(dataset['Angle']==a) & (dataset['Real/Predicted']=='Real')]['Second Peak Amplitude'].std()
       pred_std = dataset[(dataset['Angle']==a) & (dataset['Real/Predicted']=='Predicted')]['Second Peak Amplitude'].std()
+      real_median = np.median(dataset[(dataset['Angle']==a) & (dataset['Real/Predicted']=='Real')]['Second Peak Amplitude'])
+      pred_median = np.median(dataset[(dataset['Angle']==a) & (dataset['Real/Predicted']=='Predicted')]['Second Peak Amplitude'])
       real_means.append(real_mean)
       pred_means.append(pred_mean)
       real_stds.append(real_std)
       pred_stds.append(pred_std)
+      real_medians.append(real_median)
+      pred_medians.append(pred_median)
     real_means,pred_means = np.array(real_means),np.array(pred_means)
     real_stds,pred_stds = np.array(real_stds),np.array(pred_stds)
+    real_medians, pred_medians = np.array(real_medians),np.array(pred_medians)
     return {'Real Mean':real_means,'Pred Mean':pred_means,
+            'Real Median':real_medians, 'Pred Median':pred_medians,
             'Real Std':real_stds,'Pred Std':pred_stds,'Angles':angles}
 
 def angle_plot(angle_dataset,confidence = 1):
@@ -208,10 +217,46 @@ def angle_plot(angle_dataset,confidence = 1):
     plt.xlabel('Angles',fontsize=20)
     plt.ylabel('Second Peak Amplitude',fontsize=20)
     plt.legend(fontsize=14)
-    plt.savefig('result_plot/SecondPeakShadePlot.png')
+    plt.savefig('result_plot/SecondPeakShadeMeanPlot.png')
     
 
 
+def angle_mean_plot(angle_dataset,confidence = 1):
+    angles = angle_dataset['Angles']
+    real_means = angle_dataset['Real Mean']
+    real_stds = angle_dataset['Real Std']
+    pred_means = angle_dataset['Pred Mean']
+    pred_stds = angle_dataset['Pred Std']
+    lb_true, up_true = real_means-confidence*real_stds,real_means+confidence*real_stds
+    lb_pred,up_pred = pred_means-confidence*pred_stds,pred_means+confidence*pred_stds
+    plt.figure(figsize=(20,10))
+    plt.plot(angles,real_means,marker='x',label='Real Mean')
+    plt.plot(angles,pred_means,marker='x',label='Predicted Mean')
+    plt.fill_between(angles,lb_true,up_true,alpha=0.2,label=r'$\pm$ %.1f standard deviation, real values'%(confidence))
+    plt.fill_between(angles,lb_pred,up_pred,alpha=0.2,label=r'$\pm$ %.1f standard deviation, predicted values'%(confidence))
+    plt.xlabel('Angles',fontsize=20)
+    plt.ylabel('Second Peak Amplitude',fontsize=20)
+    plt.legend(fontsize=14)
+    plt.savefig('result_plot/SecondPeakShadeMeanPlot.png')
+
+
+def angle_median_plot(angle_dataset,confidence = 1):
+    angles = angle_dataset['Angles']
+    real_means = angle_dataset['Real Median']
+    real_stds = angle_dataset['Real Std']
+    pred_means = angle_dataset['Pred Median']
+    pred_stds = angle_dataset['Pred Std']
+    lb_true, up_true = real_means-confidence*real_stds,real_means+confidence*real_stds
+    lb_pred,up_pred = pred_means-confidence*pred_stds,pred_means+confidence*pred_stds
+    plt.figure(figsize=(20,10))
+    plt.plot(angles,real_means,marker='x',label='Real Median')
+    plt.plot(angles,pred_means,marker='x',label='Predicted Median')
+    plt.fill_between(angles,lb_true,up_true,alpha=0.2,label=r'$\pm$ %.1f standard deviation, real values'%(confidence))
+    plt.fill_between(angles,lb_pred,up_pred,alpha=0.2,label=r'$\pm$ %.1f standard deviation, predicted values'%(confidence))
+    plt.xlabel('Angles',fontsize=20)
+    plt.ylabel('Second Peak Amplitude',fontsize=20)
+    plt.legend(fontsize=14)
+    plt.savefig('result_plot/SecondPeakMedianShadePlot.png')
     
 
     
