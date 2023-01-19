@@ -12,7 +12,7 @@ from pydrive.drive import GoogleDrive
 
 if __name__=='__main__':
  
-
+    print('Accessing files on Google Drive...\n')
     gauth = GoogleAuth()
     # Try to load saved client credentials
     gauth.LoadCredentialsFile("credential_access.txt")

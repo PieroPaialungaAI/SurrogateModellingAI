@@ -103,7 +103,7 @@ def plot_best_predictions(angles_defect,X,Y,Y_pred,test_list):
     for angle in angles:
         angle_data = np.where(angle_test_list==angle)[0]
         mse_angle = mse_list[test_list][angle_data]
-        picked = np.argsort(mse_angle[0:2])
+        picked = np.argsort(mse_angle)[0:2]
         best_list.append(angle_data[picked])
     plt.figure(figsize=(30,30))
     J = len(best_list) 
