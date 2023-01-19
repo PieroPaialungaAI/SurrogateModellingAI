@@ -98,7 +98,7 @@ def plot_best_predictions(angles_defect,X,Y,Y_pred,test_list):
     q = 1
     mse_list = error_statistics(Y,Y_pred)['MSE list']
     best_list = []
-    angles = list(set(angles_defect))
+    angles = np.sort(list(set(angles_defect)))
     angle_test_list = angles_defect[test_list]
     for angle in angles:
         angle_data = np.where(angle_test_list==angle)[0]
