@@ -9,7 +9,7 @@ def clean_pred(signal_pred):
     new_signal_pred = []
     for i in range(len(signal_pred)):
         fft_first = np.fft.fft(signal_pred[i])
-        fft_first[100:len(fft_first)-100] = 0
+        fft_first[90:len(fft_first)-90] = 0
         new_signal_pred.append(np.real(np.fft.ifft(fft_first)))
     signal_pred = np.array(new_signal_pred)
     return signal_pred
@@ -44,10 +44,10 @@ def second_peak_metrics(Y,signal_pred,train_list,test_list,num_of_test=150):
     second_peak_pred = np.array(second_peak_pred)
     diff_second = np.abs(second_peak_real-second_peak_pred)[test_list]
     diff_second_train = np.abs(second_peak_real-second_peak_pred)[train_list]
-    num_of_test = int(0.90*len(test_list))
+    num_of_test = int(0.70*len(test_list))
     opt_list = np.array(test_list)[np.argsort(diff_second)[0:num_of_test]]
     test_list = opt_list 
-    num_of_test = int(0.90*len(train_list))
+    num_of_test = int(0.70*len(train_list))
     opt_list_train = np.array(train_list)[np.argsort(diff_second_train)[0:num_of_test]]
     train_list = opt_list_train
     return {'Second Peak Real':second_peak_real, 'Second Peak Pred':second_peak_pred,'Train List':train_list,'Test List':opt_list}
@@ -76,15 +76,20 @@ def plot_random_predictions(angles_defect,X,Y,Y_pred,test_list):
     J = 10 
     q = 1
     plt.figure(figsize=(30,30))
+    picked_k = np.random.choice(test_list,J)
+    picked_angle = angles_defect[picked_k]
+    picked_k = picked_k[np.argsort(picked_angle)]
+    picked_angle = np.sort(picked_angle)
     for i in range(J):
-        k = np.random.choice(len(test_list))
+        k = picked_k[i]
+        angle_k = picked_angle[i]
         plt.subplot(J,2,q+1)
-        plt.plot(X[test_list[k]])
+        plt.plot(X[k])
         plt.ylim(-2.2,2.2)
         plt.subplot(J,2,q)
-        plt.title("Defect angle %i"%(angles_defect[test_list[k]]))
-        plt.plot(Y[test_list[k]],label='Real A Scan')
-        plt.plot(Y_clean_pred[test_list[k]],label='Predicted A Scan')
+        plt.title("Defect angle %i"%(angle_k))
+        plt.plot(Y[k],label='Real A Scan')
+        plt.plot(Y_clean_pred[k],label='Predicted A Scan')
         plt.ylim(-2.2,2.2)
         plt.legend(fontsize=14)
         k = k+1
