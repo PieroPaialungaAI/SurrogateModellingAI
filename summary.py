@@ -4,7 +4,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from analyzer import *
 
+
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+
+
+
 if __name__=='__main__':
+ 
+
+    gauth = GoogleAuth()
+    # Try to load saved client credentials
+    gauth.LoadCredentialsFile("credential_access.txt")
+    if gauth.credentials is None:
+        # Authenticate if they're not there
+        gauth.LocalWebserverAuth()
+    elif gauth.access_token_expired:
+        # Refresh them if expired
+        gauth.Refresh()
+    else:
+        # Initialize the saved creds
+        gauth.Authorize()
+    # Save the current credentials to a file
+    gauth.SaveCredentialsFile("credential_access.txt")
+
+    drive = GoogleDrive(gauth)
+    fileList = drive.ListFile({'q': "'1UXZPYf6xddbqV8uSZCMTLL0AKGdUNw4K' in parents and trashed=false"}).GetList()
+    for file in fileList:
+        file.GetContentFile(file['title'])
     results = np.load('result.npy',allow_pickle=True).item()
     Y, Y_pred = results['Y'],results['Y_pred']
     train_list, test_list = results['train_list'],results['test_list']
