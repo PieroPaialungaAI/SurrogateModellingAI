@@ -5,6 +5,7 @@ from scipy.signal import find_peaks,hilbert
 from sklearn.metrics import mean_squared_error as mse
 import seaborn as sns
 
+
 def clean_pred(signal_pred):
     new_signal_pred = []
     for i in range(len(signal_pred)):
@@ -42,15 +43,8 @@ def second_peak_metrics(Y,signal_pred,train_list,test_list,num_of_test=150):
         second_peak_pred.append(np.abs(second))
     second_peak_real = np.array(second_peak_real)
     second_peak_pred = np.array(second_peak_pred)
-    diff_second = np.abs(second_peak_real-second_peak_pred)[test_list]
-    diff_second_train = np.abs(second_peak_real-second_peak_pred)[train_list]
-    num_of_test = int(0.70*len(test_list))
-    opt_list = np.array(test_list)[np.argsort(diff_second)[0:num_of_test]]
-    test_list = opt_list 
-    num_of_test = int(0.70*len(train_list))
-    opt_list_train = np.array(train_list)[np.argsort(diff_second_train)[0:num_of_test]]
-    train_list = opt_list_train
-    return {'Second Peak Real':second_peak_real, 'Second Peak Pred':second_peak_pred,'Train List':train_list,'Test List':opt_list}
+    #train_list = np.random.choice(opt_list_train,int(0.7*len(train_list))) 
+    return {'Second Peak Real':second_peak_real, 'Second Peak Pred':second_peak_pred,'Train List':train_list,'Test List':test_list}
 
 def second_peak_plot(Y,signal_pred,train_list,test_list,num_of_test=130):
     second_peak_values = second_peak_metrics(Y,signal_pred,train_list,test_list,num_of_test)
@@ -136,22 +130,28 @@ def plot_overview(angle_data,X,Y,Y_pred,test_list):
     mse_test = mse_list[test_list]
     i=1
     plt.figure(figsize=(20,10))
-    num = 15
-    opt_list = test_list[np.argsort(mse_test)[0:50]]
+    num = 20
+    opt_list = test_list[np.argsort(mse_test)[0:30]]
     np.random.shuffle(opt_list)
     opt_list = opt_list[0:num]
     l=0
+    plt.figure(figsize=(20,18))
+    s = np.random.uniform((-1,1))
     for j in range(num):
       k = opt_list[l]
-      plt.subplot(5,3,l+1)
-      plt.title(angle_data[k])
-      plt.plot(Y_clean_pred[k],label='pred')
-      plt.plot(Y[k],label='real')
+      plt.subplot(5,4,l+1)
+      plt.title('Angle='+str(angle_data[k]))
+      plt.plot(Y_clean_pred[k],label='Predicted Scan')
+      plt.plot(Y[k],label='Target Scan')
       plt.ylim(-3.0,3.0)
       l=l+1
-      plt.legend(fontsize=12)
+      plt.legend(fontsize=8)
     plt.tight_layout()
     plt.savefig('result_plot/BestExamplePlotOverview.png')
+    
+    
+
+
     
 
 def second_peak_vs_angle_raw(second_peak_data,angle_data):
