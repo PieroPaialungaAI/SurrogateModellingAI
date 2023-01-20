@@ -27,24 +27,23 @@ if __name__=='__main__':
         gauth.Authorize()
     # Save the current credentials to a file
     gauth.SaveCredentialsFile("credential_access.txt")
-
     drive = GoogleDrive(gauth)
     fileList = drive.ListFile({'q': "'1UXZPYf6xddbqV8uSZCMTLL0AKGdUNw4K' in parents and trashed=false"}).GetList()
     for file in fileList:
         file.GetContentFile(file['title'])
     results = np.load('result.npy',allow_pickle=True).item()
     Y, Y_pred = results['Y'],results['Y_pred']
-    train_list, test_list = results['train_list'],results['test_list']   
+    train_list, test_list = results['train_list'],results['test_list']
     X = results['X']
     angle_data = results['Angle']
     print('Plotting the results of the second peak...\n')
     second_peak_plot(Y,Y_pred,train_list,test_list)
     print('Plotting 10 random examples...\n')
-    spmetrics = second_peak_metrics(Y, Y_pred, train_list, test_list)
-    train_list, test_list = spmetrics['Train List'], spmetrics['Test List']    
     plot_random_predictions(angle_data,X,Y,Y_pred,test_list)
     print('Plotting 10 best examples...\n')
     plot_best_predictions(angle_data,X,Y,Y_pred,test_list)
+    print('Plotting overview...\n')
+    plot_overview(angle_data,X,Y,Y_pred,test_list)
     print('Smoothing predictions...\n')
     Y_pred = clean_pred(Y_pred)
     print('Exporting MSE statistics...\n')
@@ -64,3 +63,5 @@ if __name__=='__main__':
     angle_data = angle_dataset(dataset)    
     print('Plotting Amplitude vs Angle data...\n')    
     angle_plot(angle_data)
+    
+    

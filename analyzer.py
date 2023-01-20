@@ -127,6 +127,31 @@ def plot_best_predictions(angles_defect,X,Y,Y_pred,test_list):
         q=q+2
         plt.tight_layout() 
     plt.savefig('result_plot/BestExamplePlot.png')
+
+
+def plot_overview(angle_data,X,Y,Y_pred,test_list):
+    Y_clean_pred = clean_pred(Y_pred)
+    q = 1
+    mse_list = error_statistics(Y,Y_pred)['MSE list']
+    mse_test = mse_list[test_list]
+    i=1
+    plt.figure(figsize=(20,10))
+    num = 15
+    opt_list = test_list[np.argsort(mse_test)[0:50]]
+    np.random.shuffle(opt_list)
+    opt_list = opt_list[0:num]
+    l=0
+    for j in range(num):
+      k = opt_list[l]
+      plt.subplot(5,3,l+1)
+      plt.title(angle_data[k])
+      plt.plot(Y_clean_pred[k],label='pred')
+      plt.plot(Y[k],label='real')
+      plt.ylim(-3.0,3.0)
+      l=l+1
+      plt.legend(fontsize=12)
+    plt.tight_layout()
+    plt.savefig('result_plot/BestExamplePlotOverview.png')
     
 
 def second_peak_vs_angle_raw(second_peak_data,angle_data):
