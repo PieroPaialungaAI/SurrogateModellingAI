@@ -27,7 +27,7 @@ class DataPreProcessor:
         Y = scipy.io.loadmat(self.a_scan_loc)[SCAN_STRING]
         try:
             angle = return_angle(self.a_scan_loc)
-            trimming_point = preprocess_smooth_scans(self.a_scan_loc,self.file_path)
+            trimming_point = find_starting_point(self.a_scan_loc,self.file_path)
             print(trimming_point)
         except:
             trimming_point = 23450
@@ -64,7 +64,10 @@ def full_preprocess(f,dataloc,file_loc):
     Y.to_csv(dataloc+'/'+'target_scans.csv')
     X_top.to_csv(dataloc+'/'+'right_profile_defects.csv')
     X_bottom.to_csv(dataloc+'/'+'left_profile_defects.csv')
-    
+    #smooth_defect = preprocess_smooth_scan(file_loc,dataloc)
+    #np.save(dataloc+'/'+'smooth_defect.npy',smooth_defect)    
+
+
 if __name__ == "__main__":
     e_fold = extract_folders(FILE_PATH)
     for fold in e_fold:

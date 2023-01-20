@@ -17,11 +17,17 @@ def return_angle(a_scan_loc):
     return angle
 
 
-def preprocess_smooth_scans(a_scan_loc,file_path):
+def find_starting_point(a_scan_loc,file_path):
     angle = return_angle(a_scan_loc)
     Y = (scipy.io.loadmat(file_path+'/'+SMOOTH_FOLD+'/'+str(int(angle))+'_smooth.mat')[SCAN_STRING]*10**14)[0]
     trimming_start = np.where(Y>0.0005)[0][0]
     return trimming_start
+
+def preprocess_smooth_scan(file_path):
+    Y = (scipy.io.loadmat(file_path))['TimeseriesMat'][0]*SCALE_FACTOR_SIGNAL
+    trimming_start = np.where(Y>0.0005)[0][0]
+    Y = Y[trimming_start:trimming_start+4000]
+    return Y
 
 
 def a_scans_prepro(a_scans,trimming_point):
