@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import find_peaks,hilbert
 from sklearn.metrics import mean_squared_error as mse
 import seaborn as sns
+import os
 
 
 def clean_pred(signal_pred):
@@ -289,6 +290,8 @@ def angle_median_plot(angle_dataset,confidence = 1):
     plt.ylabel('Second Peak Amplitude',fontsize=20)
     plt.legend(fontsize=14)
     plt.savefig('result_plot/SecondPeakMedianShadePlot.png')
+    
+    
     
 
     
