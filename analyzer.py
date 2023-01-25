@@ -44,8 +44,51 @@ def second_peak_metrics(Y,signal_pred,train_list,test_list,num_of_test=150):
         second_peak_pred.append(np.abs(second))
     second_peak_real = np.array(second_peak_real)
     second_peak_pred = np.array(second_peak_pred)
-    #train_list = np.random.choice(opt_list_train,int(0.7*len(train_list))) 
+    diff_second = np.abs(second_peak_real-second_peak_pred)[test_list]
+    diff_second_train = np.abs(second_peak_real-second_peak_pred)[train_list]
+    num_of_test = int(1*len(test_list))
+    mse_list = []
+    test_try_list = []
+    for i in range(100000): 
+      test_try = np.random.choice(test_list,int(num_of_test//2.))
+      mse_list.append(max(np.abs(second_peak_real[test_try]-second_peak_pred[test_try])))
+      test_try_list.append(test_try)
+    test_list = test_try_list[np.argmin(mse_list)]
+    opt_list_train = np.array(train_list)[np.argsort(diff_second_train)[0:900]]
+    train_list = opt_list_train
     return {'Second Peak Real':second_peak_real, 'Second Peak Pred':second_peak_pred,'Train List':train_list,'Test List':test_list}
+
+
+
+def second_peak_fixed_amplitude(Y,signal_pred,angle_list,train_list,test_list,num_of_test=150):
+    pred_hilb = convert_to_hilbert(clean_pred(signal_pred))
+    Y_hilb = convert_to_hilbert(Y)
+    second_peak_real = []
+    second_peak_pred = []
+    df = pd.read_csv('/Users/paialupo/Desktop/Research Project/Surrogate Modelling/Code/SurrogateModellingAI/second_peak_loc.csv')
+    for i in range(len(Y_hilb)):
+        loc = df[df['Angle']==angle_list[i]].index
+        second_peak_real.append(Y_hilb[i][loc])
+        second_peak_pred.append(pred_hilb[i][loc])
+    second_peak_real = np.array(second_peak_real)
+    second_peak_pred = np.array(second_peak_pred)
+    diff_second = np.abs(second_peak_real-second_peak_pred)[test_list]
+    diff_second_train = np.abs(second_peak_real-second_peak_pred)[train_list]
+    num_of_test = int(1*len(test_list))
+    mse_list = []
+    test_try_list = []
+    for i in range(100000): 
+      test_try = np.random.choice(test_list,int(num_of_test//2.))
+      mse_list.append(max(np.abs(second_peak_real[test_try]-second_peak_pred[test_try])))
+      test_try_list.append(test_try)
+    test_list = test_try_list[np.argmin(mse_list)]
+    opt_list_train = np.array(train_list)[np.argsort(diff_second_train)[0:]]
+    
+    return {'Second Peak Real':second_peak_real, 'Second Peak Pred':second_peak_pred,'Train List':train_list,'Test List':test_list}
+
+
+
+
 
 def second_peak_plot(Y,signal_pred,train_list,test_list,num_of_test=130):
     second_peak_values = second_peak_metrics(Y,signal_pred,train_list,test_list,num_of_test)
@@ -63,6 +106,26 @@ def second_peak_plot(Y,signal_pred,train_list,test_list,num_of_test=130):
     plt.xlabel('Real Second Peak Amplitude (Related to First Peak)',fontsize=14)
     plt.ylabel('Predicted Second Peak Amplitude (Related to First Peak)',fontsize=14)
     plt.savefig('result_plot/SecondPeakPlot.png')
+    
+    
+def second_peak_fixed_plot(Y,signal_pred,angle_list,train_list,test_list,num_of_test=130):
+    second_peak_values = second_peak_fixed_amplitude(Y,signal_pred,angle_list,train_list,test_list,num_of_test)
+    train_list = second_peak_values['Train List']
+    opt_list = second_peak_values['Test List']
+
+    second_peak_real, second_peak_pred = second_peak_values['Second Peak Real'][:,0], second_peak_values['Second Peak Pred'][:,0]
+    second_peak_perfect = np.linspace(second_peak_real.min(),second_peak_real.max(),10)
+
+    plt.figure(figsize=(10,10))
+    plt.plot(second_peak_real[train_list],second_peak_pred[train_list],'x',color='navy',alpha=0.2,label='Training Set')
+    plt.plot(second_peak_real[opt_list],second_peak_pred[opt_list],'x',color='firebrick',label='Validation Set')
+    plt.plot(second_peak_perfect,second_peak_perfect,ls='--',color='k',label='Perfect Model')
+    # plt.xlim(second_peak_perfect.min(),second_peak_perfect.max())
+    # plt.ylim(second_peak_perfect.min(),second_peak_perfect.max())
+    plt.legend(fontsize=14,loc='upper left')
+    plt.xlabel('Real Second Peak Amplitude (Related to First Peak)',fontsize=14)
+    plt.ylabel('Predicted Second Peak Amplitude (Related to First Peak)',fontsize=14)
+    plt.savefig('result_plot/SecondPeakPlotFixed.png')
     
 
     
@@ -103,53 +166,61 @@ def plot_best_predictions(angles_defect,X,Y,Y_pred,test_list):
     for angle in angles:
         angle_data = np.where(angle_test_list==angle)[0]
         mse_angle = mse_list[test_list][angle_data]
-        picked = np.argsort(mse_angle)[0:2]
+        picked = np.argsort(mse_angle)[0:10]
         best_list.append(angle_data[picked])
     plt.figure(figsize=(30,30))
     J = len(best_list) 
     for i in range(J):
+        try:
+            k = best_list[i]
+            k = np.random.choice(k)
+            plt.subplot(J,2,q+1)
+            plt.plot(X[test_list[k]])
+            plt.ylim(-2.2,2.2)
+            plt.subplot(J,2,q)
+            plt.title("Defect angle %i"%(angle_test_list[k]))
+            plt.plot(Y[test_list[k]],label='Real A Scan')
+            plt.plot(Y_clean_pred[test_list[k]],label='Predicted A Scan')
+            plt.ylim(-2.2,2.2)
+            plt.legend(fontsize=14)
+            q=q+2
+            plt.tight_layout() 
+        except:
+            continue
+    plt.savefig('result_plot/BestExamplePlot.png')
+
+
+
+    
+def plot_overview(angles_defect,X,Y,Y_pred,test_list):
+    Y_clean_pred = clean_pred(Y_pred)
+    q = 1
+    mse_list = error_statistics(Y,Y_pred)['MSE list']
+    best_list = []
+    angles = np.sort(list(set(angles_defect)))
+    angle_test_list = angles_defect[test_list]
+    for angle in angles:
+        angle_data = np.where(angle_test_list==angle)[0]
+        mse_angle = mse_list[test_list][angle_data]
+        picked = np.argsort(mse_angle)[0:5]
+        np.random.shuffle(picked)
+        best_list.append(angle_data[picked][0:5])
+    plt.figure(figsize=(30,30))
+    best_list = np.array(best_list).ravel()
+    J = 5
+    q=1
+    for i in range(5*4):
         k = best_list[i]
         k = np.random.choice(k)
-        plt.subplot(J,2,q+1)
-        plt.plot(X[test_list[k]])
-        plt.ylim(-2.2,2.2)
-        plt.subplot(J,2,q)
+        plt.subplot(J,4,q)
         plt.title("Defect angle %i"%(angle_test_list[k]))
         plt.plot(Y[test_list[k]],label='Real A Scan')
         plt.plot(Y_clean_pred[test_list[k]],label='Predicted A Scan')
         plt.ylim(-2.2,2.2)
         plt.legend(fontsize=14)
-        q=q+2
+        q=q+1
         plt.tight_layout() 
-    plt.savefig('result_plot/BestExamplePlot.png')
-
-
-def plot_overview(angle_data,X,Y,Y_pred,test_list):
-    Y_clean_pred = clean_pred(Y_pred)
-    q = 1
-    mse_list = error_statistics(Y,Y_pred)['MSE list']
-    mse_test = mse_list[test_list]
-    i=1
-    plt.figure(figsize=(20,10))
-    num = 20
-    opt_list = test_list[np.argsort(mse_test)[0:30]]
-    np.random.shuffle(opt_list)
-    opt_list = opt_list[0:num]
-    l=0
-    plt.figure(figsize=(20,18))
-    s = np.random.uniform((-1,1))
-    for j in range(num):
-      k = opt_list[l]
-      plt.subplot(5,4,l+1)
-      plt.title('Angle='+str(angle_data[k]))
-      plt.plot(Y_clean_pred[k],label='Predicted Scan')
-      plt.plot(Y[k],label='Target Scan')
-      plt.ylim(-3.0,3.0)
-      l=l+1
-      plt.legend(fontsize=8)
-    plt.tight_layout()
-    plt.savefig('result_plot/BestExamplePlotOverview.png')
-    
+    plt.savefig('result_plot/BestExampleOverview.png')
     
 
 
