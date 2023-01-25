@@ -39,8 +39,10 @@ if __name__=='__main__':
     train_list, test_list = results['train_list'],results['test_list']
     X = results['X']
     angle_data = results['Angle']
-    print('Plotting the results of the second peak...\n')
+    print('Plotting the amplitudes of the second peak (changing loc)...\n')
     second_peak_plot(Y,Y_pred,train_list,test_list)
+    print('Plotting the amplitudes of the second peak (fixed loc)...\n')
+    second_peak_fixed_plot(Y,Y_pred,angle_data,train_list,test_list)
     print('Plotting 10 random examples...\n')
     plot_random_predictions(angle_data,X,Y,Y_pred,test_list)
     print('Plotting 10 best examples...\n')
