@@ -76,11 +76,7 @@ Two different models are implemented:
 
 1. The `full_scan_model.h5` takes as an input the defect and it outputs is the full normalized A scan model. This model combines the computational power of a Convolutional Neural Network (CNN) and the one of the Recurrent Neural Network (RNN-GRU). The inputs of these two models are the raw 240 long defect and a reshaped version of the same defect. The reshape converts the 240 long defect into 10 bits of 24 values. The dataset for this model is prepared using the `data_loader.py` script in the `dataset` module. As we can see from the image below the output of the model is 1800 points long (that's the length of the target A scan)
 
-"Insert RNN-CNN image here" 
-
 2. The `main_peak_model.h5` takes as an input the defect and it outputs a single value, which is the main peak and the normalization factor of the A scan. This model is a Recurrent Neural Network LSTM one and the input is the raw defect. The dataset for this model is prepared using the `data_loader.py` script in the `dataset` module. As we can see from the image below the output of the model is a single value. 
-
-"Insert RNN image here"
 
 
 
