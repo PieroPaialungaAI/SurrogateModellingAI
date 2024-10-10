@@ -31,7 +31,7 @@ The first step of our code is the import and preprocess of the training data.
 
 The training data are generated using a software named [Pogo](http://www.pogo.software/). This software allows us to do a 
 simulation on ultrasonic experiments. In particular, given the setup discussed in the Paper, we are able to generate for a given defect, the response A scan. 
-All the profiles of the defects are included into a forPogo folder (???) and the defects A scan are collected into a single
+All the profiles of the defects are included into a forPogo folder and the defects A scan are collected into a single
 `
 .mat
 `
